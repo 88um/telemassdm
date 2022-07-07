@@ -2,11 +2,12 @@ import os, random, time
 from telethon.sync import TelegramClient
 from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelRequest
 from telethon.errors.rpcerrorlist import *
+API_ID = 1370903  
+API_HASH = '23c73e7bb6075cd2c909ca51decd7460' 
 
 
 
-
-def check_files(phone : str)-> str:
+def check_files(phone : str) -> tuple:
     global groups #yea
     groups = []
     if not os.path.exists(phone):os.mkdir(phone)
@@ -26,10 +27,10 @@ def check_files(phone : str)-> str:
         message = fr.read()
 
     
-    with open('group_list.txt', 'r') as f:
+    with open('group_list.txt', 'r',encoding='utf-8') as f:
         groupz = f.read().splitlines()
         for item in groupz:
-            item =item.replace("@","").replace(" ","")
+            item =item.replace("@","").replace(" ","").replace("✔️","")
             groups.append(item)
 
     
@@ -44,7 +45,7 @@ def check_files(phone : str)-> str:
 def remove_group(group : str):
         try:groups.remove(group)
         except:pass
-        with open("group_list.txt","r") as f:lines=f.read().splitlines()
+        with open("group_list.txt","r",encoding='utf-8') as f:lines=f.read().splitlines()
         with open("group_list.txt","w") as f:
             for line in lines:
                 if line!=group:
@@ -74,6 +75,9 @@ def join_groups(client : TelegramClient):
             print(f'\r[{phone}] Joined -> "{group}"',end='')
         except ValueError as e:
             remove_group(group)
+        except FloodWaitError:
+            print(f"\r[{phone}] Blocked from joining groups...sleep 30 minutes")
+            time.sleep(1800)
     print(f"\r[{phone}] All markets have been joined!")
 
         
@@ -100,10 +104,8 @@ def main():
     phone, message = check_files(phone)
     join_groups(client)
     while True:
+        phone, message = check_files(phone)
         msg_groups(client,message)
 
 
-if __name__ == "__main__":
-  API_ID = 1370903  
-  API_HASH = '23c73e7bb6075cd2c909ca51decd7460' 
-  main()
+main()
