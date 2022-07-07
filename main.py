@@ -6,7 +6,7 @@ from telethon.errors.rpcerrorlist import *
 
 
 
-def check_files(phone : str) -> tuple:
+def check_files(phone : str)-> str:
     global groups #yea
     groups = []
     if not os.path.exists(phone):os.mkdir(phone)
