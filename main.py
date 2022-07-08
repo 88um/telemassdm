@@ -63,6 +63,9 @@ def msg_groups(client : TelegramClient, message : str):
         except SlowModeWaitError:
             print(f"\r[{phone}] Slow mode for  -> {group}",end='')
             #groups.append(group)
+        except FloodWaitError as e:
+            print(f"\r[{phone}] Blocked from sending messages...sleep {e.seconds} seconds")
+            time.sleep(e.seconds)
     print(f"\r[{phone}] All markets have been messaged! Sleeping 1-2 hours...")
     time.sleep(random.randint(3600,7200))
 
@@ -75,13 +78,13 @@ def join_groups(client : TelegramClient):
             chat_id= "-100"+str(client.get_entity(group).__getattribute__("id"))
             if chat_id in current_groups:continue
             client(JoinChannelRequest(group))
-            print(f'\r[{phone}] Joined -> "{group} sleep 5 min"',end='')
+            print(f'\r[{phone}] Joined -> "{group}" sleep 5 min',end='')
             time.sleep(300)
         except ValueError as e:
             remove_group(group)
-        except FloodWaitError:
-            print(f"\r[{phone}] Blocked from joining groups...sleep 30 minutes")
-            time.sleep(1800)
+        except FloodWaitError as e:
+            print(f"\r[{phone}] Blocked from joining groups...sleep {e.seconds} seconds")
+            time.sleep(e.seconds)
     print(f"\r[{phone}] All markets have been joined!")
 
         
